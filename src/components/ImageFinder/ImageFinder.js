@@ -1,5 +1,4 @@
 import { Component } from 'react';
-import Loader from 'react-loader-spinner';
 
 import fetchPixabayAPI from '../../services/pixabayAPI';
 
@@ -8,6 +7,7 @@ import ImageGallery from '../ImageGallery';
 import Modal from '../Modal';
 import LargeImage from '../LargeImage';
 import ButtonLoadMore from '../ButtonLoadMore';
+import Spiner from '../Spiner';
 
 class ImageFinder extends Component {
   state = {
@@ -100,39 +100,33 @@ class ImageFinder extends Component {
   };
 
   render() {
-    if (this.state.status === 'idle') {
+    const { status, images, showModal, onFetch, largeImgURL } = this.state;
+
+    if (status === 'idle') {
       return <Preview />;
     }
 
-    if (this.state.status === 'rejected') {
+    if (status === 'rejected') {
       return <div>{this.state.error.message}</div>;
     }
 
-    if (this.state.status === 'resolved') {
+    if (status === 'resolved') {
       return (
         <>
           <ImageGallery
-            images={this.state.images}
+            images={images}
             onClick={e => {
               this.setLargeImgURL(e, this.togleModal);
             }}
           />
 
-          {this.state.showModal && (
+          {showModal && (
             <Modal onClose={this.togleModal}>
-              <LargeImage url={this.state.largeImgURL} />
+              <LargeImage url={largeImgURL} />
             </Modal>
           )}
 
-          {this.state.onFetch && (
-            <Loader
-              type="Puff"
-              color="#00BFFF"
-              height={100}
-              width={100}
-              timeout={3000} //3 secs
-            />
-          )}
+          {onFetch && <Spiner />}
 
           <ButtonLoadMore onLoadMore={this.onLoadMore} />
         </>
