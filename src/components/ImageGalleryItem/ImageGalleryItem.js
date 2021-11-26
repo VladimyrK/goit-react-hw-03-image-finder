@@ -1,9 +1,25 @@
-function ImageGalleryItem({ url }) {
+import PropTypes from 'prop-types';
+
+import s from './ImageGalleryItem.module.css';
+
+function ImageGalleryItem({ id, url, onClick }) {
   return (
-    <li className="gallery-item">
-      <img src={url} alt="Result of your query" />
+    <li className={s.ImageGalleryItem}>
+      <img
+        className={s.ImageGalleryItemImage}
+        src={url}
+        alt="Result of your query"
+        id={id}
+        onClick={onClick}
+      />
     </li>
   );
 }
+
+ImageGalleryItem.protoType = {
+  id: PropTypes.string,
+  url: PropTypes.string,
+  onClick: PropTypes.func,
+};
 
 export default ImageGalleryItem;

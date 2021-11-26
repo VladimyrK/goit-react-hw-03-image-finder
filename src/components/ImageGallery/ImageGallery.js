@@ -1,13 +1,29 @@
+import PropTypes from 'prop-types';
+
 import ImageGalleryItem from '../ImageGalleryItem';
 
-function ImageGallery({ images }) {
+import s from './ImageGallery.module.css';
+
+function ImageGallery({ images, onClick }) {
   return (
-    <ul className="gallery">
-      {images.map(image => {
-        return <ImageGalleryItem key={image.id} url={image.webformatURL} />;
+    <ul className={s.ImageGallery}>
+      {images.map(({ id, webformatURL }) => {
+        return (
+          <ImageGalleryItem
+            key={id}
+            id={id}
+            url={webformatURL}
+            onClick={onClick}
+          />
+        );
       })}
     </ul>
   );
 }
+
+ImageGallery.protoType = {
+  images: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string)),
+  onClick: PropTypes.func,
+};
 
 export default ImageGallery;
