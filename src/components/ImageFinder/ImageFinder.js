@@ -9,9 +9,12 @@ import LargeImage from '../LargeImage';
 import ButtonLoadMore from '../ButtonLoadMore';
 import Spiner from '../Spiner';
 
+const errorMessageOnStartQuery = 'No images for this query';
+const errorMessageOnLoadMore = 'No more images for this query';
+
 class ImageFinder extends Component {
   state = {
-    images: null,
+    images: [],
     page: 1,
     error: null,
     status: 'idle',
@@ -26,8 +29,9 @@ class ImageFinder extends Component {
     const currentPage = this.props.page;
 
     if (prevQuery !== currentQuery) {
+      this.setState({ images: [] });
       this.setState({ page: 1 });
-      this.renderImages(currentQuery, currentPage);
+      this.renderImages(currentQuery, currentPage, errorMessageOnStartQuery);
     }
   }
 
@@ -37,38 +41,27 @@ class ImageFinder extends Component {
         page: prev.page + 1,
       }),
       async () => {
-        await this.renderMoreImages();
+        await this.renderImages(
+          this.props.query,
+          this.state.page,
+          errorMessageOnLoadMore,
+        );
       },
     );
   };
 
-  renderImages = async (currentQuery, currentPage) => {
+  renderImages = async (currentQuery, currentPage, message) => {
     try {
       this.togleOnFetch();
       const images = await fetchPixabayAPI(currentQuery, currentPage);
       this.togleOnFetch();
       if (images.length === 0) {
-        const error = new Error('No images for this query');
-        this.setState({ error, status: 'rejected' });
-      } else {
-        this.setState({ images, status: 'resolved' });
-      }
-    } catch (error) {
-      this.setState({ error, status: 'rejected' });
-    }
-  };
-
-  renderMoreImages = async () => {
-    try {
-      this.togleOnFetch();
-      const images = await fetchPixabayAPI(this.props.query, this.state.page);
-      this.togleOnFetch();
-      if (images.length === 0) {
-        const error = new Error('No more images for this query');
+        const error = new Error(message);
         this.setState({ error, status: 'rejected' });
       } else {
         this.setState(prev => ({
           images: [...prev.images, ...images],
+          status: 'resolved',
         }));
       }
     } catch (error) {
