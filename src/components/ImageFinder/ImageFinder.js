@@ -63,6 +63,11 @@ class ImageFinder extends Component {
           images: [...prev.images, ...images],
           status: 'resolved',
         }));
+
+        window.scrollTo({
+          top: document.documentElement.scrollHeight,
+          behavior: 'smooth',
+        });
       }
     } catch (error) {
       this.setState({ error, status: 'rejected' });
